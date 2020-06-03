@@ -2,30 +2,31 @@ import TransactionsRepository from '../repositories/TransactionsRepository';
 import Transaction from '../models/Transaction';
 
 interface Request {
+  id: string;
   title: string;
   value: number;
   type: 'income' | 'outcome';
 }
 
-class CreateTransactionService {
+class UpdateTransactionService {
   private transactionsRepository: TransactionsRepository;
 
   constructor(transactionsRepository: TransactionsRepository) {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute({ title, value, type }: Request): Transaction {
+  public execute({ id, title, value, type }: Request): Transaction {
     try {
-      const newTransaction = new Transaction({ title, value, type });
-      this.transactionsRepository.create(newTransaction);
-
-      const transactions = this.transactionsRepository.all();
-
-      return transactions[transactions.length - 1];
+      return this.transactionsRepository.update({
+        id,
+        title,
+        value,
+        type,
+      });
     } catch (error) {
       throw Error(`${error.message}`);
     }
   }
 }
 
-export default CreateTransactionService;
+export default UpdateTransactionService;
